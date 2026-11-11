@@ -1,2 +1,10 @@
 .DS_Store
 node_modules/
+
+# Ferramentas e temporarios de edicao
+_tmp/
+video-editor/out/
+
+# Videos originais baixados (pesados): so o filme final editado vai para o Git
+assets/videos/*
+!assets/videos/plano-sequencia.mp4
