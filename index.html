@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Do grão à xícara</title>
+  <meta name="description" content="O caminho do café em cinco tempos: a queda do grão, a máquina, o fogo, a cafeteira e a xícara.">
+  <meta name="theme-color" content="#120a06">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500&family=Spectral:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link rel="preload" as="image" href="assets/images/frame_0001.webp" type="image/webp">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main>
+    <!-- Ato principal: o filme inteiro, desenhado num canvas e guiado pelo scroll -->
+    <section class="film" id="filme" aria-label="O caminho do café">
+      <div class="film__stage">
+        <canvas class="film__canvas" role="img"
+          aria-label="Filme contínuo: grãos de café caindo, sendo mexidos numa máquina, torrando no fogo, o café saindo da cafeteira e servido numa xícara com desenho de espuma de leite."></canvas>
+        <noscript><img class="film__fallback" src="assets/images/frame_0001.webp" alt=""></noscript>
+        <div class="film__shade" aria-hidden="true"></div>
+
+        <header class="film__intro">
+          <h1 class="film__title">Do grão<br>à xícara</h1>
+          <p class="film__lede">O caminho do café em cinco tempos. Role devagar.</p>
+        </header>
+
+        <ol class="film__verses">
+          <li class="verse" data-from="14" data-to="63">
+            <p><span>Antes do aroma, há a queda.</span>
+            <span>Um grão encontra outro grão</span>
+            <span>e o silêncio vira chão.</span></p>
+          </li>
+          <li class="verse" data-from="63" data-to="114">
+            <p><span>Braços de ferro giram devagar.</span>
+            <span>Nada se apressa aqui:</span>
+            <span>o tempo também é ingrediente.</span></p>
+          </li>
+          <li class="verse" data-from="114" data-to="201">
+            <p><span>Depois, o fogo.</span>
+            <span>O grão aprende a escurecer,</span>
+            <span>e o cheiro sobe antes da fumaça.</span></p>
+          </li>
+          <li class="verse" data-from="201" data-to="270">
+            <p><span>A água atravessa o pó</span>
+            <span>e volta trazendo tudo</span>
+            <span>o que o grão guardava.</span></p>
+          </li>
+          <li class="verse" data-from="270" data-to="372">
+            <p><span>Por fim, a xícara.</span>
+            <span>Um desenho de leite</span>
+            <span>que dura o tempo de um gole.</span></p>
+          </li>
+        </ol>
+
+        <nav class="film__rail" aria-label="Etapas do caminho">
+          <ol>
+            <li><a href="#filme" data-frame="20">A queda</a></li>
+            <li><a href="#filme" data-frame="70">A máquina</a></li>
+            <li><a href="#filme" data-frame="125">O fogo</a></li>
+            <li><a href="#filme" data-frame="210">A cafeteira</a></li>
+            <li><a href="#filme" data-frame="285">A xícara</a></li>
+          </ol>
+          <span class="film__rail-fill" aria-hidden="true"></span>
+        </nav>
+
+        <p class="film__loading" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <!-- Transição final com CSS sticky: o último quadro recua até virar um retrato -->
+    <section class="closing" aria-labelledby="closing-title">
+      <div class="closing__stage">
+        <figure class="closing__frame">
+          <img src="assets/images/frame_0372.webp" alt="Xícara branca com desenho de espuma de leite, segurada por uma mão." loading="lazy" decoding="async">
+        </figure>
+        <div class="closing__text">
+          <h2 id="closing-title">Cada gole carrega a viagem inteira.</h2>
+          <p>Da queda do grão ao desenho na espuma, foram fogo, ferro, água e tempo. Tudo isso cabe numa xícara.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>Um projeto pessoal de scrollytelling. Vídeos de bancos gratuitos (Pexels e Mixkit), editados num único plano.</p>
+    <a class="footer__top" href="#filme">Voltar ao início</a>
+  </footer>
+
+  <script src="js/main.js" defer></script>
+</body>
+</html>

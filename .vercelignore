@@ -1,0 +1,6 @@
+# O site publicado precisa só de index.html, css/, js/ e assets/images/
+video-editor/
+.claude/
+_tmp/
+assets/videos/
+README.md
