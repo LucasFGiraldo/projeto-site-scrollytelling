@@ -1,6 +1,8 @@
 /**
- * Linha do tempo do plano-sequência: grão → fogo → torrador → grãos → espresso → xícara.
- * Ordem pensada para os cortes caírem em fumaça, escuro e na xícara branca (match cut).
+ * Linha do tempo do plano-sequência:
+ * grãos caindo → grãos sendo mexidos na máquina → grãos torrando no fogo →
+ * café saindo da cafeteira → café na xícara com desenho de espuma de leite.
+ * Os cortes caem em escuro, grão contra grão e na xícara branca (match cut).
  */
 export type Look = {
   /** ganho de exposição (1 = igual ao original) */
@@ -34,21 +36,23 @@ export type Clip = {
 };
 
 export const clips: Clip[] = [
+  // 1. Grãos de café caindo
   {
-    id: "fogo",
-    file: "17122045-hd_1920_1080_50fps.mp4",
+    id: "graos",
+    file: "44802-440260915.mp4",
     srcStart: 1.5,
-    seconds: 8,
+    seconds: 6,
     orientation: "landscape",
     push: [1.0, 1.1],
     look: {
-      exposure: 0.8,
-      gamma: 1.0,
-      rgb: [0.98, 0.94, 0.92],
-      lift: [0.012, 0.007, 0.003],
-      saturation: 0.82,
+      exposure: 1.45,
+      gamma: 0.78,
+      rgb: [1.04, 0.98, 0.9],
+      lift: [0.02, 0.012, 0.006],
+      saturation: 1.0,
     },
   },
+  // 2. Grãos sendo mexidos em uma máquina
   {
     id: "torrador",
     file: "17645750-hd_1080_1920_60fps.mp4",
@@ -65,21 +69,23 @@ export const clips: Clip[] = [
       saturation: 0.9,
     },
   },
+  // 3. Grãos sendo torrados
   {
-    id: "graos",
-    file: "44802-440260915.mp4",
+    id: "fogo",
+    file: "17122045-hd_1920_1080_50fps.mp4",
     srcStart: 1.5,
-    seconds: 6,
+    seconds: 8,
     orientation: "landscape",
-    push: [1.04, 1.12],
+    push: [1.0, 1.1],
     look: {
-      exposure: 1.45,
-      gamma: 0.78,
-      rgb: [1.04, 0.98, 0.9],
-      lift: [0.02, 0.012, 0.006],
-      saturation: 1.0,
+      exposure: 0.8,
+      gamma: 1.0,
+      rgb: [0.98, 0.94, 0.92],
+      lift: [0.012, 0.007, 0.003],
+      saturation: 0.82,
     },
   },
+  // 4. Café saindo da cafeteira
   {
     id: "espresso",
     file: "mixkit-cup-being-filled-with-coffee-in-a-coffee-machine-41865-full-hd.mp4",
@@ -96,6 +102,7 @@ export const clips: Clip[] = [
       saturation: 1.08,
     },
   },
+  // 5. Café na xícara + desenho de espuma de leite
   {
     id: "xicara",
     file: "mixkit-serving-a-sparkling-cappuccino-in-a-cup-41859-full-hd.mp4",
