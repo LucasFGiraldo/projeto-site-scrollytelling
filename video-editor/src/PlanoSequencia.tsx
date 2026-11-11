@@ -75,10 +75,68 @@ const ClipLayer: React.FC<{ clip: Clip; isFirst: boolean }> = ({
   const settle = 1 + (1 - p) * 0.05;
 
   const push = interpolate(frame, [0, durationInFrames], clip.push, CLAMP);
-  const k = theme.width / 1080; // fator de ampliação do vertical para 1920 px
-
   const trimBefore = secondsToFrames(clip.srcStart);
   const src = staticFile(clip.file);
+  const fit = clip.fit ?? 1;
+  const isPortrait = clip.orientation === "portrait";
+
+  /** O vídeo ocupando a fração `f` da largura do quadro (1 = preenche). */
+  const renderVideo = (f: number) => {
+    if (!isPortrait) {
+      return (
+        <OffthreadVideo
+          src={src}
+          trimBefore={trimBefore}
+          muted
+          style={{ width: theme.width, height: theme.height, objectFit: "cover" }}
+        />
+      );
+    }
+    const w = theme.width * f;
+    const k = w / 1080; // ampliação do vertical
+    const tilt = interpolate(
+      frame,
+      [0, durationInFrames],
+      [clip.tilt!.from, clip.tilt!.to],
+      CLAMP,
+    );
+    // mantém o mesmo centro vertical do enquadramento original
+    const centerSrc = tilt + theme.height / (theme.width / 1080) / 2;
+    return (
+      <OffthreadVideo
+        src={src}
+        trimBefore={trimBefore}
+        muted
+        style={{
+          position: "absolute",
+          left: (theme.width - w) / 2,
+          width: w,
+          height: 1920 * k,
+          top: theme.height / 2 - centerSrc * k,
+        }}
+      />
+    );
+  };
+
+  // Câmera afastada: o vídeo fica menor, com as bordas esfumadas sobre uma
+  // cópia desfocada dele mesmo, que preenche o resto do quadro.
+  const feather = 170;
+  const side = (theme.width * (1 - fit)) / 2;
+  const maskX = isPortrait
+    ? `linear-gradient(to right, transparent ${side}px, black ${side + feather}px, black ${theme.width - side - feather}px, transparent ${theme.width - side}px)`
+    : "linear-gradient(to right, transparent, black 11%, black 89%, transparent)";
+  const maskY = "linear-gradient(to bottom, transparent, black 13%, black 87%, transparent)";
+  const mask = isPortrait ? maskX : `${maskX}, ${maskY}`;
+  const fgStyle: React.CSSProperties =
+    fit < 1
+      ? {
+          transform: isPortrait ? undefined : `scale(${fit})`,
+          maskImage: mask,
+          WebkitMaskImage: mask,
+          maskComposite: "intersect",
+          WebkitMaskComposite: "source-in",
+        }
+      : {};
 
   return (
     <AbsoluteFill
@@ -90,37 +148,14 @@ const ClipLayer: React.FC<{ clip: Clip; isFirst: boolean }> = ({
           filter: `url(#${filterId(clip.id)})`,
         }}
       >
-        {clip.orientation === "landscape" ? (
-          <OffthreadVideo
-            src={src}
-            trimBefore={trimBefore}
-            muted
-            style={{
-              width: theme.width,
-              height: theme.height,
-              objectFit: "cover",
-            }}
-          />
-        ) : (
-          <OffthreadVideo
-            src={src}
-            trimBefore={trimBefore}
-            muted
-            style={{
-              position: "absolute",
-              left: 0,
-              width: theme.width,
-              height: 1920 * k,
-              top:
-                -interpolate(
-                  frame,
-                  [0, durationInFrames],
-                  [clip.tilt!.from, clip.tilt!.to],
-                  CLAMP,
-                ) * k,
-            }}
-          />
-        )}
+        {fit < 1 ? (
+          <AbsoluteFill
+            style={{ filter: "blur(38px) brightness(0.9)", transform: "scale(1.18)" }}
+          >
+            {renderVideo(1)}
+          </AbsoluteFill>
+        ) : null}
+        <AbsoluteFill style={fgStyle}>{renderVideo(fit)}</AbsoluteFill>
       </AbsoluteFill>
     </AbsoluteFill>
   );

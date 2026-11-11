@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#120a06">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500&family=Spectral:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700&family=Spectral:ital,wght@0,300;0,400;1,400&display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/images/frame_0001.webp" type="image/webp">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -17,10 +17,13 @@
     <!-- Ato principal: o filme inteiro, desenhado num canvas e guiado pelo scroll -->
     <section class="film" id="filme" aria-label="O caminho do café">
       <div class="film__stage">
-        <canvas class="film__canvas" role="img"
-          aria-label="Filme contínuo: grãos de café caindo, sendo mexidos numa máquina, torrando no fogo, o café saindo da cafeteira e servido numa xícara com desenho de espuma de leite."></canvas>
-        <noscript><img class="film__fallback" src="assets/images/frame_0001.webp" alt=""></noscript>
-        <div class="film__shade" aria-hidden="true"></div>
+        <!-- Um único quadro: o filme roda aqui e, no fim, este mesmo quadro encolhe até virar um retrato -->
+        <div class="film__frame">
+          <canvas class="film__canvas" role="img"
+            aria-label="Filme contínuo: grãos de café caindo, sendo mexidos numa máquina, torrando no fogo, o café saindo da cafeteira e servido numa xícara com desenho de espuma de leite."></canvas>
+          <noscript><img class="film__fallback" src="assets/images/frame_0001.webp" alt=""></noscript>
+          <div class="film__shade" aria-hidden="true"></div>
+        </div>
 
         <header class="film__intro">
           <h1 class="film__title">Do grão<br>à xícara</h1>
@@ -67,17 +70,9 @@
         </nav>
 
         <p class="film__loading" aria-live="polite"></p>
-      </div>
-    </section>
 
-    <!-- Transição final com CSS sticky: o último quadro recua até virar um retrato -->
-    <section class="closing" aria-labelledby="closing-title">
-      <div class="closing__stage">
-        <figure class="closing__frame">
-          <img src="assets/images/frame_0372.webp" alt="Xícara branca com desenho de espuma de leite, segurada por uma mão." loading="lazy" decoding="async">
-        </figure>
         <div class="closing__text">
-          <h2 id="closing-title">Cada gole carrega a viagem inteira.</h2>
+          <h2>Cada gole carrega a viagem inteira.</h2>
           <p>Da queda do grão ao desenho na espuma, foram fogo, ferro, água e tempo. Tudo isso cabe numa xícara.</p>
         </div>
       </div>

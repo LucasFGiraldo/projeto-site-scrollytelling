@@ -3,8 +3,10 @@
   --espresso: #120a06;
   --torra: #2a170c;
   --crema: #ead7b7;
-  --crema-dim: rgba(234, 215, 183, 0.62);
-  --crema-faint: rgba(234, 215, 183, 0.28);
+  --crema-dim: rgba(234, 215, 183, 0.86);
+  --crema-soft: rgba(234, 215, 183, 0.7);
+  --crema-faint: rgba(234, 215, 183, 0.3);
+  --text-shadow: 0 0 2px rgba(18, 10, 6, 0.7), 0 2px 22px rgba(18, 10, 6, 0.85);
   --ember: #c97a32;
 
   --serif: "Spectral", Georgia, "Times New Roman", serif;
@@ -12,7 +14,7 @@
 
   --gutter: clamp(1rem, 4vw, 4.5rem);
   --film-length: 900vh; /* quanto scroll o filme inteiro ocupa */
-  --closing-length: 240vh;
+  --closing-length: 150vh; /* scroll extra em que o quadro vira retrato */
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -45,7 +47,7 @@ a { color: inherit; }
 
 .film {
   position: relative;
-  height: var(--film-length);
+  height: calc(var(--film-length) + var(--closing-length));
 }
 
 .film__stage {
@@ -54,6 +56,24 @@ a { color: inherit; }
   height: 100vh;
   height: 100svh;
   overflow: hidden;
+  /* definidos no JS: --p (0 a 1) encolhe o quadro; --ui esconde versos e trilho */
+  --p: 0;
+  --ui: 1;
+}
+
+/* O quadro do filme. No fim do scroll, ele mesmo encolhe até virar um retrato. */
+.film__frame {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(
+    calc(var(--p) * 12vh) calc(var(--p) * 47vw) calc(var(--p) * 12vh) calc(var(--p) * var(--gutter))
+    round calc(var(--p) * 6px)
+  );
+}
+
+/* desloca a imagem para manter a xícara no centro da janela que encolhe */
+.film__canvas {
+  transform: translateX(calc(var(--p) * -13vw));
 }
 
 .film__canvas,
@@ -66,13 +86,16 @@ a { color: inherit; }
   display: block;
 }
 
-/* Sombra só onde há texto: canto inferior esquerdo */
+/* Sombra onde há texto: base e canto inferior esquerdo (versos), lateral direita (trilho) */
 .film__shade {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  opacity: var(--ui);
   background:
-    radial-gradient(110% 85% at 0% 100%, rgba(18, 10, 6, 0.9) 0%, rgba(18, 10, 6, 0.55) 34%, rgba(18, 10, 6, 0) 64%),
+    radial-gradient(120% 95% at 0% 100%, rgba(18, 10, 6, 0.94) 0%, rgba(18, 10, 6, 0.72) 32%, rgba(18, 10, 6, 0) 68%),
+    linear-gradient(0deg, rgba(18, 10, 6, 0.6) 0%, rgba(18, 10, 6, 0) 42%),
+    linear-gradient(270deg, rgba(18, 10, 6, 0.6) 0%, rgba(18, 10, 6, 0) 24%),
     linear-gradient(180deg, rgba(18, 10, 6, 0.35) 0%, rgba(18, 10, 6, 0) 22%);
 }
 
@@ -100,14 +123,19 @@ a { color: inherit; }
   font-weight: 400;
   font-size: clamp(0.95rem, 0.88rem + 0.3vw, 1.1rem);
   line-height: 1.5;
-  color: var(--crema-dim);
+  font-weight: 500;
+  color: var(--crema);
+  text-shadow: var(--text-shadow);
 }
+
+.film__title { text-shadow: 0 2px 40px rgba(18, 10, 6, 0.6); }
 
 /* Versos: todos no mesmo lugar, um de cada vez */
 .film__verses {
   list-style: none;
   margin: 0;
   padding: 0;
+  opacity: var(--ui);
 }
 
 .verse {
@@ -121,9 +149,10 @@ a { color: inherit; }
 .verse p {
   margin: 0;
   max-width: 17em;
-  text-shadow: 0 1px 24px rgba(18, 10, 6, 0.55);
+  font-weight: 400;
+  text-shadow: var(--text-shadow);
   font-size: clamp(1.6rem, 1rem + 2.4vw, 3.15rem);
-  line-height: 1.16;
+  line-height: 1.2;
   letter-spacing: -0.012em;
 }
 
@@ -136,7 +165,7 @@ a { color: inherit; }
     transform 900ms var(--ease-out);
 }
 
-.verse span + span { font-style: italic; color: var(--crema-dim); }
+.verse span + span { font-style: italic; color: #f3e6cf; }
 
 .verse.is-active span { opacity: 1; transform: none; }
 .verse.is-active span:nth-child(2) { transition-delay: 90ms; }
@@ -152,6 +181,7 @@ a { color: inherit; }
   top: 50%;
   transform: translateY(-50%);
   padding-right: 1.1rem;
+  opacity: var(--ui);
 }
 
 .film__rail ol {
@@ -165,16 +195,17 @@ a { color: inherit; }
 
 .film__rail a {
   font-family: var(--sans);
-  font-size: 0.82rem;
+  font-size: 0.95rem;
   font-weight: 500;
   letter-spacing: 0.01em;
   text-decoration: none;
-  color: var(--crema-faint);
+  color: var(--crema-soft);
+  text-shadow: var(--text-shadow);
   transition: color 400ms var(--ease-out);
 }
 
-.film__rail a:hover { color: var(--crema-dim); }
-.film__rail a[aria-current="step"] { color: var(--crema); }
+.film__rail a:hover { color: var(--crema); }
+.film__rail a[aria-current="step"] { color: #fff6e6; font-weight: 700; }
 
 .film__rail::before,
 .film__rail-fill {
@@ -199,48 +230,15 @@ a { color: inherit; }
   bottom: 1.5rem;
   margin: 0;
   font-family: var(--sans);
-  font-size: 0.8rem;
-  color: var(--crema-dim);
-  transition: opacity 600ms ease;
+  font-size: 0.85rem;
+  color: var(--crema);
+  text-shadow: var(--text-shadow);
+  opacity: var(--ui); /* some junto com os versos quando o quadro vira retrato */
 }
 
 .film__loading:empty { opacity: 0; }
 
-/* ---------- Fechamento: o quadro final recua (CSS sticky) ---------- */
-
-.closing {
-  position: relative;
-  height: var(--closing-length);
-}
-
-.closing__stage {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
-  overflow: hidden;
-  /* --p vai de 0 a 1 conforme o scroll (definido no JS) */
-  --p: 0;
-}
-
-.closing__frame {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  clip-path: inset(
-    calc(var(--p) * 12vh) calc(var(--p) * 47vw) calc(var(--p) * 12vh) calc(var(--p) * var(--gutter))
-    round calc(var(--p) * 6px)
-  );
-}
-
-.closing__frame img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  /* desloca a imagem para manter a xícara no centro da janela que encolhe */
-  transform: translateX(calc(var(--p) * -6vw)) scale(calc(1 + var(--p) * 0.06));
-}
+/* ---------- Fechamento: texto que entra ao lado do retrato ---------- */
 
 .closing__text {
   position: absolute;
@@ -253,7 +251,7 @@ a { color: inherit; }
 
 .closing__text h2 {
   margin: 0;
-  font-weight: 300;
+  font-weight: 400;
   font-size: clamp(2rem, 1.1rem + 2.6vw, 3.6rem);
   line-height: 1.08;
   letter-spacing: -0.02em;
@@ -294,7 +292,9 @@ a { color: inherit; }
   :root { --film-length: 800vh; }
 
   .film__shade {
-    background: linear-gradient(0deg, rgba(18, 10, 6, 0.86) 0%, rgba(18, 10, 6, 0.4) 34%, rgba(18, 10, 6, 0) 58%);
+    background:
+      linear-gradient(0deg, rgba(18, 10, 6, 0.94) 0%, rgba(18, 10, 6, 0.7) 30%, rgba(18, 10, 6, 0) 62%),
+      linear-gradient(180deg, rgba(18, 10, 6, 0.4) 0%, rgba(18, 10, 6, 0) 16%);
   }
 
   .film__intro,
@@ -325,17 +325,15 @@ a { color: inherit; }
     transform: scaleX(var(--progress, 0));
   }
 
-  .closing__frame {
+  .film__frame {
     clip-path: inset(
       calc(var(--p) * 10vh) calc(var(--p) * var(--gutter)) calc(var(--p) * 46vh) calc(var(--p) * var(--gutter))
       round calc(var(--p) * 6px)
     );
   }
 
-  .closing__frame img {
-    object-position: 38% 50%; /* a xícara fica um pouco à esquerda do quadro */
-    transform: scale(calc(1 + var(--p) * 0.04));
-  }
+  /* sobe a imagem para a xícara ficar no meio da janela, que agora é a parte de cima da tela */
+  .film__canvas { transform: translateY(calc(var(--p) * -12vh)); }
 
   .closing__text {
     left: var(--gutter);

@@ -28,8 +28,15 @@
     from: Number(el.dataset.from),
     to: Number(el.dataset.to),
   }));
-  const closing = document.querySelector(".closing");
-  const closingStage = closing.querySelector(".closing__stage");
+  const stage = film.querySelector(".film__stage");
+
+  // O scroll da seção tem duas partes: o filme e, no fim, o trecho em que o
+  // mesmo quadro encolhe até virar um retrato (--closing-length no CSS).
+  function scrollSpans() {
+    const total = film.offsetHeight - window.innerHeight;
+    const closingPx = Math.min(window.innerHeight * 1.5, total * 0.4);
+    return { filmPx: total - closingPx, closingPx };
+  }
 
   /* ---------- Carregamento progressivo dos quadros ---------- */
 
@@ -135,13 +142,10 @@
   let needsDraw = true;
   let ticking = false;
 
-  function filmProgress() {
-    const total = film.offsetHeight - window.innerHeight;
-    return clamp(-film.getBoundingClientRect().top / total, 0, 1);
-  }
-
   function onScroll() {
-    const p = filmProgress();
+    const { filmPx, closingPx } = scrollSpans();
+    const scrolled = -film.getBoundingClientRect().top;
+    const p = clamp(scrolled / filmPx, 0, 1);
     targetFrame = p * (FRAME_COUNT - 1);
 
     const introOut = clamp(1 - p / INTRO_SPAN, 0, 1);
@@ -149,13 +153,14 @@
     intro.style.visibility = introOut === 0 ? "hidden" : "visible";
     rail.style.setProperty("--progress", p.toFixed(4));
 
-    // Fechamento: a janela encolhe nos primeiros 70% e o texto entra depois
-    const total = closing.offsetHeight - window.innerHeight;
-    const cp = clamp(-closing.getBoundingClientRect().top / total, 0, 1);
-    const shrink = clamp(cp / 0.7, 0, 1);
-    const eased = 1 - Math.pow(1 - shrink, 3);
-    closingStage.style.setProperty("--p", eased.toFixed(4));
-    closingStage.style.setProperty("--reveal", clamp((cp - 0.5) / 0.3, 0, 1).toFixed(3));
+    // Fechamento, no mesmo quadro: primeiro somem versos e trilho, depois o
+    // quadro encolhe (até 75% do trecho) e por fim o texto entra.
+    const cp = clamp((scrolled - filmPx) / closingPx, 0, 1);
+    const shrink = clamp((cp - 0.08) / 0.67, 0, 1);
+    const eased = shrink * shrink * (3 - 2 * shrink);
+    stage.style.setProperty("--ui", clamp(1 - cp / 0.1, 0, 1).toFixed(3));
+    stage.style.setProperty("--p", eased.toFixed(4));
+    stage.style.setProperty("--reveal", clamp((cp - 0.55) / 0.3, 0, 1).toFixed(3));
 
     requestTick();
   }
@@ -208,8 +213,7 @@
     a.addEventListener("click", (event) => {
       event.preventDefault();
       const frame = Number(a.dataset.frame);
-      const total = film.offsetHeight - window.innerHeight;
-      const top = film.offsetTop + (frame / (FRAME_COUNT - 1)) * total;
+      const top = film.offsetTop + (frame / (FRAME_COUNT - 1)) * scrollSpans().filmPx;
       window.scrollTo({ top, behavior: reduceMotion.matches ? "auto" : "smooth" });
     });
   });

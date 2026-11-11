@@ -30,6 +30,11 @@ export type Clip = {
    * (1080x1920). A janela desce como uma inclinação (tilt) de câmera.
    */
   tilt?: { from: number; to: number };
+  /**
+   * Afasta a câmera: fração do quadro que o vídeo ocupa (1 = preenche tudo).
+   * O que sobra é preenchido por uma cópia desfocada do próprio vídeo.
+   */
+  fit?: number;
   /** zoom lento contínuo (dolly in) aplicado ao clipe inteiro */
   push: [number, number];
   look: Look;
@@ -43,7 +48,8 @@ export const clips: Clip[] = [
     srcStart: 1.5,
     seconds: 6,
     orientation: "landscape",
-    push: [1.0, 1.1],
+    fit: 0.84,
+    push: [1.0, 1.03],
     look: {
       exposure: 1.45,
       gamma: 0.78,
@@ -60,7 +66,8 @@ export const clips: Clip[] = [
     seconds: 5,
     orientation: "portrait",
     tilt: { from: 250, to: 800 },
-    push: [1.0, 1.08],
+    fit: 0.78,
+    push: [1.0, 1.03],
     look: {
       exposure: 0.96,
       gamma: 0.97,
